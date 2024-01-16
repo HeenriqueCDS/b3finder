@@ -1,0 +1,10 @@
+type History {
+    id: Int!
+    quoteSymbol: String!
+    date: Int!
+    open: Float!
+    high: Float!
+    low: Float!
+    volume: Int!
+    adjustedClose: Float!
+}
