@@ -1,0 +1,14 @@
+type History {
+    quoteSymbol: String!
+    date: Int!
+    open: Float!
+    high: Float!
+    low: Float!
+    volume: Int!
+    adjustedClose: Float!
+}
+
+type Query {
+    history(quoteSymbol: String!): [History]
+}
+
