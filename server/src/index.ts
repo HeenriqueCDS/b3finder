@@ -1,6 +1,7 @@
 import { ApolloServer } from "@apollo/server";
 
 import { startStandaloneServer } from "@apollo/server/standalone";
+import { Resolvers } from "../gql/schema";
 import { db } from "./database/client";
 
 const typeDefs = `#graphql
@@ -26,7 +27,7 @@ const typeDefs = `#graphql
     regularMarketChange: Float!
     regularMarketChangePercent: Float!
     logoUrl: String!
-    updatedAt: String!
+    updatedAt: Date!
     fiftyTwoWeekLow: Float!
     fiftyTwoWeekHigh: Float!
     marketCap: Float!
@@ -44,7 +45,7 @@ const typeDefs = `#graphql
   }
 `;
 
-const resolvers = {
+const resolvers: Resolvers = {
   Query: {
     history: async (parent, args, context) => {
       const history = await db.history.findMany({where: {quoteSymbol: args.quoteSymbol}, orderBy: {date: "asc"}});
@@ -55,7 +56,6 @@ const resolvers = {
       const quotes = await db.quote.findMany({});
       return quotes;
     },
-    
     quote: async (parent, args, context) => {
       const quote = await db.quote.findUnique({where: {symbol: args.symbol}});
       return quote;
