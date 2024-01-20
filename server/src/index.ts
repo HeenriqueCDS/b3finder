@@ -1,6 +1,7 @@
 import { ApolloServer } from "@apollo/server";
 
 import { startStandaloneServer } from "@apollo/server/standalone";
+import { db } from "./database/client";
 
 const typeDefs = `#graphql
   type History {
@@ -38,46 +39,28 @@ const typeDefs = `#graphql
   type Query {
     quotes: [Quote!]!
   }
+  type Query {
+    quote(symbol: String!): Quote!
+  }
 `;
 
 const resolvers = {
   Query: {
     history: async (parent, args, context) => {
-      return [
-        {
-          quoteSymbol: "AAPL",
-          date: 1697547600,
-          open: 17700,
-          high: 17700,
-          low: 17700,
-          volume: 17700,
-          adjustedClose: 17700,
-        },
-      ];
+      const history = await db.history.findMany({where: {quoteSymbol: args.quoteSymbol}, orderBy: {date: "asc"}});
+
+      return history;
     },
     quotes: async (parent, args, context) => {
-      return [
-        {
-          symbol: "AAPL",
-          currency: "USD",
-          shortName: "Apple Inc.",
-          longName: "Apple Inc.",
-          regularMarketPrice: 0,
-          regularMarketChange: 0,
-          regularMarketChangePercent: 0,
-          logoUrl: "https://logo.clearbit.com/apple.com",
-          updatedAt: "2021-03-19T20:00:00.000Z",
-          fiftyTwoWeekLow: 0,
-          fiftyTwoWeekHigh: 0,
-          marketCap: 0,
-          regularMarketVolume: 0,
-          regularMarketOpen: 0,
-          regularMarketDayHigh: 0,
-          regularMarketDayLow: 0,
-          regularMarketPreviousClose: 0,
-        },
-      ];
+      const quotes = await db.quote.findMany({});
+      return quotes;
     },
+    
+    quote: async (parent, args, context) => {
+      const quote = await db.quote.findUnique({where: {symbol: args.symbol}});
+      return quote;
+    },
+
   },
 };
 
