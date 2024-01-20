@@ -1,0 +1,44 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model history {
+  id            Int     @id @default(autoincrement())
+  quoteSymbol   String? @db.VarChar(255)
+  date          Int?
+  open          Float?
+  high          Float?
+  low           Float?
+  close         Float?
+  volume        Float?
+  adjustedClose Float?
+  quote         quote?  @relation(fields: [quoteSymbol], references: [symbol], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([quoteSymbol, date], map: "unique_quote_symbol_date")
+}
+
+model quote {
+  symbol                     String    @id @db.VarChar(255)
+  currency                   String?   @db.VarChar(255)
+  shortName                  String?   @db.VarChar(255)
+  longName                   String?   @db.VarChar(255)
+  regularMarketPrice         Float?
+  regularMarketChange        Float?
+  regularMarketChangePercent Float?
+  logoUrl                    String?   @db.VarChar(255)
+  updatedAt                  DateTime? @db.Date
+  fiftyTwoWeekLow            Float?
+  fiftyTwoWeekHigh           Float?
+  marketCap                  Float?
+  regularMarketVolume        Float?
+  regularMarketOpen          Float?
+  regularMarketDayHigh       Float?
+  regularMarketDayLow        Float?
+  regularMarketPreviousClose Float?
+  history                    history[]
+}
