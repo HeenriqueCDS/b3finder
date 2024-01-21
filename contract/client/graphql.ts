@@ -30,7 +30,7 @@ export type History = {
 export type Query = {
   __typename?: 'Query';
   history?: Maybe<Array<Maybe<History>>>;
-  quote: Quote;
+  quote?: Maybe<Quote>;
   quotes: Array<Quote>;
 };
 

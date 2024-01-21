@@ -31,7 +31,7 @@ export type History = {
 export type Query = {
   __typename?: 'Query';
   history?: Maybe<Array<Maybe<History>>>;
-  quote: Quote;
+  quote?: Maybe<Quote>;
   quotes: Array<Quote>;
 };
 
@@ -176,7 +176,7 @@ export type HistoryResolvers<ContextType = any, ParentType extends ResolversPare
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   history?: Resolver<Maybe<Array<Maybe<ResolversTypes['History']>>>, ParentType, ContextType, RequireFields<QueryHistoryArgs, 'quoteSymbol'>>;
-  quote?: Resolver<ResolversTypes['Quote'], ParentType, ContextType, RequireFields<QueryQuoteArgs, 'symbol'>>;
+  quote?: Resolver<Maybe<ResolversTypes['Quote']>, ParentType, ContextType, RequireFields<QueryQuoteArgs, 'symbol'>>;
   quotes?: Resolver<Array<ResolversTypes['Quote']>, ParentType, ContextType>;
 };
 
