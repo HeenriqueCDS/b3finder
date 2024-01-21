@@ -36,5 +36,5 @@
     quotes: [Quote!]!
   }
   type Query {
-    quote(symbol: String!): Quote!
+    quote(symbol: String!): Quote
   }
