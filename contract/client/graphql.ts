@@ -1,4 +1,5 @@
 /* eslint-disable */
+import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -64,3 +65,11 @@ export type Quote = {
   symbol: Scalars['String']['output'];
   updatedAt: Scalars['Date']['output'];
 };
+
+export type QuotesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type QuotesQuery = { __typename?: 'Query', quotes: Array<{ __typename?: 'Quote', symbol: string, shortName: string, regularMarketPrice: number, currency: string }> };
+
+
+export const QuotesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"quotes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"quotes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"symbol"}},{"kind":"Field","name":{"kind":"Name","value":"shortName"}},{"kind":"Field","name":{"kind":"Name","value":"regularMarketPrice"}},{"kind":"Field","name":{"kind":"Name","value":"currency"}}]}}]}}]} as unknown as DocumentNode<QuotesQuery, QuotesQueryVariables>;
