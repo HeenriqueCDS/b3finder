@@ -1,22 +1,23 @@
 import {
-  createBrowserRouter,
-  RouterProvider
+  Route,
+  BrowserRouter as Router, Routes
 } from "react-router-dom";
+import { LayoutWrapper } from "./components/layout-wrapper";
 import { Home } from "./pages/home";
 import { Quote } from "./pages/quote";
 
 const App = () => {
-  const router = createBrowserRouter([
-    {
-      path: "/",
-      element: <Home />,
-    },
-    {
-      path: "/:symbol",
-      element: <Quote />,
-    }
-  ]);
-  return <RouterProvider router={router} />
+
+  return (
+      <Router>
+          <LayoutWrapper>
+              <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/:symbol" element={<Quote />} />
+              </Routes>
+          </LayoutWrapper>
+      </Router>
+  )
 }
 
 export default App
