@@ -1,44 +1,71 @@
-import { MagnifyingGlass } from "@phosphor-icons/react"
 import { useQuery } from "@tanstack/react-query"
 import request, { gql } from "graphql-request"
+import { useNavigate } from "react-router-dom"
+interface QuotesQuery {
+    quotes: {
+        symbol: string
+        longName: string
+        logoUrl: string
+        regularMarketPrice: number
+        currency: string
+    }[]
+}
 
 export const Home = () => {
-    interface QuotesQuery {
-        quotes: {
-            symbol: string
-            shortName: string
-            regularMarketPrice: number
-            currency: string
-        }[]
-    }
+    const navigate = useNavigate()
     const listQuotesQueryDocument = gql`
     query quotes {
       quotes {
         symbol,
-        shortName,
+        longName,
         regularMarketPrice,
+        logoUrl,
         currency
       }
     }   
   `
-    const { data, isLoading } = useQuery({
+    const { data, isLoading, isFetching } = useQuery({
         queryKey: ['quotes'], queryFn: async () => {
             const { quotes } = await request<QuotesQuery>('http://localhost:4000', listQuotesQueryDocument)
             return quotes
         }
     })
 
-    isLoading && <div>Loading...</div>
+    if (isLoading || isFetching) return <div>Loading...</div>
+
     return (
-        <div className="h-screen w-screen text-neutral-300 bg-neutral-950">
-            <header className="w-screen p-4 border-b-neutral-900 border-b-2 flex flex-col gap-4">
-                <h1 className="text-3xl text-neutral-400"><span className="text-green-400">[B]</span><span className="text-yellow-400">³</span> Finder</h1>
-                <div className="flex rounded-md border-neutral-900 border-2 justify-between">
-                    <input className="bg-transparent text-neutral-300 p-2 focus:outline-none" type="text" placeholder="Search..." />
-                    <button className="bg-transparent text-neutral-300 p-2 border-l-2 border-l-neutral-900 min-w-10 flex justify-center items-center"><MagnifyingGlass className="text-neutral-700  w-5 h-5"/></button>
-                </div>
-            </header>
-            {data?.map((quote) => { return <li><a href={`/${quote.symbol}`}>{quote.symbol}</a></li> })}
+        <div className="flex flex-col p-4 gap-4 h-[calc(100%-130px)] sm:h-[calc(100%-78px)]">
+            <h1 className="text-neutral-400 text-2xl">Quotes</h1>
+            <div className="flex flex-col gap-3 overflow-auto max-h-full">
+                {data?.sort((a, b) => {
+                    if (a.regularMarketPrice > b.regularMarketPrice) {
+                        return -1
+                    }
+                    if (a.regularMarketPrice < b.regularMarketPrice) {
+                        return 1
+                    }
+                    return 0
+                }).map((quote) => {
+                    return (
+                        <article onClick={() => navigate(`/${quote.symbol}`)} className=" max-w-full inline-flex justify-between p-3 items-center border-2 rounded-md transition-all border-neutral-900 hover:-translate-y-1 cursor-pointer">
+                            <div className="flex gap-3 w-[calc(100%-80px)] overflow-hidden truncate">
+                                <img src={quote.logoUrl} className="h-10 w-10 rounded-md"/>
+                                <div className="flex flex-col gap-1 w-[calc(100%-45px)]">
+                                    <h2 className="text-base text-neutral-300 truncate">{quote.symbol}</h2>
+                                    <h2 className="text-base text-neutral-500 truncate">{quote.longName}</h2>
+                                </div>
+                            </div>
+                            <h3 className="text-green-300 text-base w-20 text-end">
+                                {quote.regularMarketPrice}{' '}
+                                <span className="text-neutral-300 text-xs">
+                                    {quote.currency}
+                                </span>
+                                </h3>
+                        </article>
+                        )
+                })}
+            </div>
+
         </div>
     )
 }
