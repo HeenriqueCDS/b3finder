@@ -24,14 +24,14 @@ export const Home = () => {
       }
     }   
   `
-    const { data, isLoading, isFetching } = useQuery({
+    const { data, isLoading } = useQuery({
         queryKey: ['quotes'], queryFn: async () => {
             const { quotes } = await request<QuotesQuery>('http://localhost:4000', listQuotesQueryDocument)
             return quotes
         }
     })
 
-    if (isLoading || isFetching) return <div>Loading...</div>
+    if (isLoading) return <div>Loading...</div>
 
     return (
         <div className="flex flex-col p-4 gap-4 h-[calc(100%-130px)] sm:h-[calc(100%-78px)]">
@@ -49,7 +49,7 @@ export const Home = () => {
                     return (
                         <article onClick={() => navigate(`/${quote.symbol}`)} className=" max-w-full inline-flex justify-between p-3 items-center border-2 rounded-md transition-all border-neutral-900 hover:-translate-y-1 cursor-pointer">
                             <div className="flex gap-3 w-[calc(100%-80px)] overflow-hidden truncate">
-                                <img src={quote.logoUrl} className="h-10 w-10 rounded-md"/>
+                                <img src={quote.logoUrl} className="h-10 w-10 rounded-md" />
                                 <div className="flex flex-col gap-1 w-[calc(100%-45px)]">
                                     <h2 className="text-base text-neutral-300 truncate">{quote.symbol}</h2>
                                     <h2 className="text-base text-neutral-500 truncate">{quote.longName}</h2>
@@ -60,9 +60,9 @@ export const Home = () => {
                                 <span className="text-neutral-300 text-xs">
                                     {quote.currency}
                                 </span>
-                                </h3>
+                            </h3>
                         </article>
-                        )
+                    )
                 })}
             </div>
 
