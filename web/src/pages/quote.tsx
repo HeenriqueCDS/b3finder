@@ -4,39 +4,16 @@ import { useCallback, useEffect, useRef, useState } from "react"
 import { Chart } from "../components/chart"
 import { Display } from "../components/display"
 import { VStack } from "../components/vstack"
+import { History } from "../types/history"
+import { Quote as QuoteType } from "../types/quote"
 import { formatMoney } from "../utils/formatMoney"
 
 interface QuoteQuery {
-  quote: {
-    symbol: string
-    currency: string
-    shortName: string
-    longName: string
-    regularMarketPrice: number
-    regularMarketChange: number
-    regularMarketChangePercent: number
-    logoUrl: string
-    updatedAt: Date | string
-    fiftyTwoWeekLow: number
-    fiftyTwoWeekHigh: number
-    marketCap: number
-    regularMarketVolume: number
-    regularMarketOpen: number
-    regularMarketDayHigh: number
-    regularMarketDayLow: number
-    regularMarketPreviousClose: number
-  }
+  quote: QuoteType
 }
 
 export interface HistoryQuery {
-  history: {
-    date: number
-    open: number
-    high: number
-    low: number
-    adjustedClose: number
-    volume: number
-  }[]
+  history: History[]
 }
 
 export const Quote = () => {
@@ -51,7 +28,7 @@ export const Quote = () => {
 
   useEffect(() => {
     resize()
-  }, [chartsRef.current, resize])
+  }, [resize])
 
   window.addEventListener('resize', resize)
 
