@@ -38,6 +38,7 @@ export type Query = {
 
 export type QueryHistoryArgs = {
   quoteSymbol: Scalars['String']['input'];
+  range?: Maybe<'1wk' | '1mo' | '3mo'  >; 
 };
 
 
