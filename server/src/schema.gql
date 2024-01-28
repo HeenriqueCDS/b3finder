@@ -30,7 +30,7 @@ type Quote {
 }
 
 type Query {
-  history(quoteSymbol: String!): [History]
+  history(quoteSymbol: String!, range: String): [History]
   quote(symbol: String!): Quote
   quotes: [Quote!]!
 }
