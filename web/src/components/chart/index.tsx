@@ -15,8 +15,6 @@ interface ChartProps {
     width: number
 }
 export const Chart = ({ history, width }: ChartProps) => {
-
-
     const data = history.map((item) => {
         return {
             ...item,

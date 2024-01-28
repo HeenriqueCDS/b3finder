@@ -1,34 +1,10 @@
-import { useQuery } from "@tanstack/react-query"
-import request, { gql } from "graphql-request"
 import { QuoteCard } from "../components/quote-card"
-interface QuotesQuery {
-    quotes: {
-        symbol: string
-        longName: string
-        logoUrl: string
-        regularMarketPrice: number
-        currency: string
-    }[]
-}
+import { useQuotes } from "../hooks/use-quotes"
+
 
 export const Home = () => {
-    const listQuotesQueryDocument = gql`
-    query quotes {
-      quotes {
-        symbol,
-        longName,
-        regularMarketPrice,
-        logoUrl,
-        currency
-      }
-    }   
-  `
-    const { data, isLoading } = useQuery({
-        queryKey: ['quotes'], queryFn: async () => {
-            const { quotes } = await request<QuotesQuery>('http://localhost:4000', listQuotesQueryDocument)
-            return quotes
-        }
-    })
+
+    const { data, isLoading } = useQuotes()
 
     if (isLoading) return <div>Loading...</div>
 
