@@ -31,7 +31,6 @@ export const SearchList = ({ data, search }: SearchListProps) => {
                     <SearchItem key={quote.symbol} quote={quote} />
                 )
             })}
-            <SearchItem quote={{ symbol: search, longName: 'Not found? click here to request a new quote with your search!', logoUrl: 'https://as1.ftcdn.net/v2/jpg/02/99/61/74/1000_F_299617487_fPJ8v9Onthhzwnp4ftILrtSGKs1JCrbh.jpg', regularMarketPrice: 0 }} />
         </div>
     )
 }
