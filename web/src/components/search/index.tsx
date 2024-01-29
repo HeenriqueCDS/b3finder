@@ -8,7 +8,6 @@ interface SearchProps {
 }
 
 export const Search = ({search, setSearch}: SearchProps) => {
-
     return (
         <div className="flex rounded-md border-neutral-900 border-2 justify-between max-w-80 relative">
             <SearchInput search={search} setSearch={setSearch} />
