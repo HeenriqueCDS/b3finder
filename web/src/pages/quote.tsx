@@ -1,27 +1,18 @@
-import { useQuery } from "@tanstack/react-query"
-import request, { gql } from "graphql-request"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { Button } from "../components/button"
 import { Chart } from "../components/chart"
 import { Display } from "../components/display"
 import { VStack } from "../components/vstack"
-import { History } from "../types/history"
-import { Quote as QuoteType } from "../types/quote"
+import { useHistory } from "../hooks/use-history"
+import { useQuote } from "../hooks/use-quote"
 import { formatMoney } from "../utils/formatMoney"
-
-interface QuoteQuery {
-  quote: QuoteType
-}
-
-export interface HistoryQuery {
-  history: History[]
-}
 
 export const Quote = () => {
   const chartsRef = useRef<HTMLDivElement>(document.getElementById('main') as HTMLDivElement)
   const [width, setWidth] = useState<number>(0)
   const [chartRange, setChartRange] = useState<'1wk' | '1mo' | '3mo' | '' >('')
-  
+  const symbol = window.location.pathname.replace('/', '')
+
   const resize = useCallback(() => {
     setTimeout(() => {
       setWidth(chartsRef.current?.offsetWidth - 32)
@@ -34,56 +25,10 @@ export const Quote = () => {
   window.addEventListener('resize', resize)
 
 
-  const symbol = window.location.pathname.replace('/', '')
-  const getQuoteQueryDocument = gql`
-    query quote ($symbol: String!) {
-      quote (symbol: $symbol) {
-        symbol,
-        currency,
-        shortName,
-        longName,
-        regularMarketPrice,
-        regularMarketChange,
-        regularMarketChangePercent,
-        logoUrl,
-        updatedAt,
-        fiftyTwoWeekLow,
-        fiftyTwoWeekHigh,
-        marketCap,
-        regularMarketVolume,
-        regularMarketOpen,
-        regularMarketDayHigh,
-        regularMarketDayLow,
-        regularMarketPreviousClose
-      }
-    }   
-  `
-  const getHistoryQueryDocument = gql`
-    query history ($quoteSymbol: String!, $range: String) {
-      history (quoteSymbol: $quoteSymbol, range: $range) {
-        date,
-        open,
-        high,
-        low,
-        adjustedClose,
-        volume
-      }
-    }   
-  `
+  const { data, isLoading } = useQuote(symbol)
 
-  const { data, isLoading } = useQuery({
-    queryKey: [`${symbol}`], queryFn: async () => {
-      const { quote } = await request<QuoteQuery>('http://localhost:4000', getQuoteQueryDocument, { symbol })
-      return quote
-    }
-  })
+  const { data: historyData, refetch } = useHistory({symbol, chartRange})
 
-  const { data: historyData, refetch } = useQuery({
-    queryKey: [`${symbol}-history`], queryFn: async () => {
-      const { history } = await request<HistoryQuery>('http://localhost:4000', getHistoryQueryDocument, { quoteSymbol: symbol, range: chartRange})
-      return history
-    }
-  })
 
   useEffect(() => {
     refetch()
