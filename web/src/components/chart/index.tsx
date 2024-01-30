@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Legend, Line, LineChart, Tooltip, XAxis, YAxis } from "recharts"
 import { formatMoney } from "../../utils/formatMoney"
 
@@ -8,11 +9,16 @@ interface History {
     low: number
     adjustedClose: number
     volume: number
-
 }
 interface ChartProps {
     history: History[]
     width: number
+}
+
+interface CustomTooltipProps {
+    active?: boolean
+    payload?: any
+    label?: string
 }
 export const Chart = ({ history, width }: ChartProps) => {
     const data = history.map((item) => {
@@ -22,7 +28,7 @@ export const Chart = ({ history, width }: ChartProps) => {
         }
     })
 
-    const CustomTooltip = ({ active, payload, label }: unknown)  => {
+    const CustomTooltip = ({ active, payload, label }: CustomTooltipProps)  => {
         if (active && payload && payload.length) {
           const dataItem = data.find(item => item.date === label);
           const formattedValue = formatMoney(payload[0].value)
@@ -41,7 +47,7 @@ export const Chart = ({ history, width }: ChartProps) => {
         <LineChart className="w-full bg-c" width={width}  height={250} data={data}>
             <XAxis className="text-xs" dataKey="date" />
             <YAxis className="text-xs" domain={['auto', 'auto']}/>
-            <Tooltip content={<CustomTooltip/>}/>
+            <Tooltip content={<CustomTooltip />}/>
             <Legend />
             <Line type="monotone" dataKey="adjustedClose" dot={false} name="close" stroke="#8884d8" />
 
