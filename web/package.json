@@ -17,9 +17,11 @@
     "graphql-request": "^6.1.0",
     "localforage": "^1.10.0",
     "match-sorter": "^6.3.3",
+    "pusher-js": "^8.4.0-rc2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.21.3",
+    "react-toastify": "^10.0.4",
     "recharts": "^2.10.4",
     "sort-by": "^1.2.0"
   },
