@@ -1,46 +1,58 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useCallback, useEffect, useRef, useState } from "react"
+import { useNavigate } from "react-router-dom"
 import { Button } from "../components/button"
 import { Chart } from "../components/chart"
 import { Display } from "../components/display"
+import { Loading } from "../components/loading"
 import { VStack } from "../components/vstack"
 import { useHistory } from "../hooks/use-history"
 import { useQuote } from "../hooks/use-quote"
+import { pusher } from "../services/pusher"
 import { formatMoney } from "../utils/formatMoney"
 
 export const Quote = () => {
-  const chartsRef = useRef<HTMLDivElement>(document.getElementById('main') as HTMLDivElement)
   const [width, setWidth] = useState<number>(0)
-  const [chartRange, setChartRange] = useState<'1wk' | '1mo' | '3mo' | '' >('')
+  const [chartRange, setChartRange] = useState<'1wk' | '1mo' | '3mo' | ''>('')
+  const chartsRef = useRef<HTMLDivElement>(document.getElementById('main') as HTMLDivElement)
   const symbol = window.location.pathname.replace('/', '')
-
+  const navigate = useNavigate()
   const resize = useCallback(() => {
     setTimeout(() => {
       setWidth(chartsRef.current?.offsetWidth - 32)
     }, 300)
   }, [])
-
   useEffect(() => {
     resize()
   }, [resize])
   window.addEventListener('resize', resize)
-
-
-  const { data, isLoading } = useQuote(symbol)
-
-  const { data: historyData, refetch } = useHistory({symbol, chartRange})
-
-
+  const { data, isLoading, refetch } = useQuote(symbol)
+  const history = useHistory({ symbol, chartRange })
   useEffect(() => {
-    refetch()
-  }, [chartRange, refetch])
-
-
+    history.refetch()
+  }, [chartRange])
+  useEffect(() => {
+    const channel = pusher.subscribe(`${symbol}-tracker`);
+    channel.bind('stock-updated', function () {
+      refetch()
+      history.refetch()
+    });
+    channel.bind('stock-not-found', function () {
+      navigate('/')
+      alert('Stock not found')
+    });
+    return () => {
+      pusher.unsubscribe(`${symbol}-tracker`)
+    }
+  }, [])
 
   return (
+    <>
+    <Loading loading={isLoading || history.isLoading || (!history.data && chartRange !== '')}/>
     <div id="main" className="flex flex-col p-4 gap-4 h-[calc(100%-130px)] sm:h-[calc(100%-78px)] overflow-auto" ref={chartsRef}>
       {isLoading ?
         <h1>Loading...</h1> :
-        !data ? <h1>Not found</h1> :
+        !data ? <h1>Trying to find new quote...</h1> :
           <>
             <div className="flex justify-between">
               <VStack>
@@ -61,14 +73,14 @@ export const Quote = () => {
                 </span>
               </VStack>
             </div>
-            {historyData &&
+            {history.data &&
               <>
                 <div className="flex gap-3">
-                  <Button value="1wk" onClick={setChartRange} state={chartRange}/>
-                  <Button value="1mo" onClick={setChartRange} state={chartRange}/>
-                  <Button value="3mo" onClick={setChartRange} state={chartRange}/>
+                  <Button value="1wk" onClick={setChartRange} state={chartRange} />
+                  <Button value="1mo" onClick={setChartRange} state={chartRange} />
+                  <Button value="3mo" onClick={setChartRange} state={chartRange} />
                 </div>
-                <Chart history={historyData} width={width} />
+                <Chart history={history.data} width={width} />
               </>
             }
             <div className="flex gap-3">
@@ -94,5 +106,6 @@ export const Quote = () => {
           </>
       }
     </div>
+    </>
   )
 }
