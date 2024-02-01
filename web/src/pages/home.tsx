@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { Loading } from "../components/loading"
 import { QuoteCard } from "../components/quote-card"
 import { Search } from "../components/search"
 import { useQuotes } from "../hooks/use-quotes"
@@ -8,9 +9,8 @@ export const Home = () => {
 
     const { data, isLoading } = useQuotes()
     const [search, setSearch] = useState<string>('')
-
-    if (isLoading) return <div>Loading...</div>
-    if (!data) return <div>Something went wrong</div>
+    if (isLoading) return <Loading loading={isLoading} />
+    if (!data) return <h1>Error</h1>
 
     const filteredData = data.filter(item =>
         item.symbol.toLocaleLowerCase().includes(search.toLocaleLowerCase()) ||
@@ -28,6 +28,7 @@ export const Home = () => {
                 {filteredData.map((quote) => {
                     return <QuoteCard key={quote.symbol} {...quote} />
                 })}
+                {search.length > 3 && <QuoteCard logoUrl='https://cdn-icons-png.flaticon.com/512/4315/4315609.png' symbol={search} longName="Not found? click this card to try to add the new ticker! (Only works with b3 tickers)" />}
                 {filteredData.length === 0 && <div className="text-neutral-400 text-xl">No results found</div>}
             </div>
         </div>
