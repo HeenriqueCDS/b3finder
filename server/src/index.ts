@@ -13,22 +13,28 @@ const resolvers: Resolvers = {
   Query: {
     history: async (parent, args, context) => {
       const { range } = args; 
-      let where = { quoteSymbol: args.quoteSymbol, AND: {} };
 
-      if (range == "1wk") where.AND = { date: { gte: startTimestamp1WeekAgo } };
-      if (range == "1mo") where.AND = { date: { gte: startTimestamp1MonthAgo } };
-      if (range == "3mo") where.AND = { date: { gte: startTimestamp3MonthsAgo } };
+
 
       const history = await db.history.findMany({
-        where,
+        where: { quoteSymbol: args.quoteSymbol},
         orderBy: { date: "asc" },
       });
 
-      if (history.length < 5 && range == "1wk") await importTicker(args.quoteSymbol);
-      if (history.length < 22 && range == "1mo") await importTicker(args.quoteSymbol);
-      if (history.length < 62 && range == "3mo") await importTicker(args.quoteSymbol);
+      if (history.length < 62) return []
+
+      const filteredHistory = history.filter((h) => {
+        if (range == "1wk") return h.date >= startTimestamp1WeekAgo;
+        if (range == "1mo") return h.date >= startTimestamp1MonthAgo;
+        if (range == "3mo") return h.date >= startTimestamp3MonthsAgo;
+        return true;
+      })
+
+      if (filteredHistory.length < 5 && range == "1wk") await importTicker(args.quoteSymbol);
+      if (filteredHistory.length < 22 && range == "1mo") await importTicker(args.quoteSymbol);
+      if (filteredHistory.length < 62 && range == "3mo") await importTicker(args.quoteSymbol);
       
-      return history;
+      return filteredHistory;
     },
     quotes: async (parent, args, context) => {
       const quotes = await db.quote.findMany({});
