@@ -34,7 +34,7 @@ export const Chart = ({ history, width }: ChartProps) => {
           const formattedValue = formatMoney(payload[0].value)
           return (
             <div className="flex flex-col bg-neutral-950 border-neutral-600 border-[1px] p-2 text-sm rounded-md gap-1 items-center">
-              <p className="label text-xs">{dataItem!.date}</p>
+              <p className="label text-xs">{dataItem?.date}</p>
               <p className="label text-[#8884d8]">{formattedValue}</p>
             </div>
           );
