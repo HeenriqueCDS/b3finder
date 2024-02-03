@@ -7,7 +7,6 @@ import { Home } from "./pages/home";
 import { Quote } from "./pages/quote";
 
 const App = () => {
-
   return (
       <Router>
           <LayoutWrapper>
