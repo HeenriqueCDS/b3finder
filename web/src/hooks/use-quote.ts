@@ -32,7 +32,7 @@ const getQuoteQueryDocument = gql`
 
 const useQuote = (symbol: string) => useQuery({
     queryKey: [`${symbol}`], queryFn: async () => {
-      const { quote } = await request<QuoteQuery>('http://localhost:4000', getQuoteQueryDocument, { symbol })
+      const { quote } = await request<QuoteQuery>(import.meta.env.VITE_API_URL, getQuoteQueryDocument, { symbol })
       return quote
     }
   })

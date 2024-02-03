@@ -26,7 +26,7 @@ export const useQuotes = () => useQuery({
   queryKey: ["quotes"],
   queryFn: async () => {
     const { quotes } = await request<QuotesQuery>(
-      "http://localhost:4000",
+      import.meta.env.VITE_API_URL,
       listQuotesQueryDocument
     );
     return quotes;

@@ -27,7 +27,7 @@ const useHistory = ({symbol, chartRange}: useHistoryParams) => useQuery({
   queryKey: [`${symbol}-history`],
   queryFn: async () => {
     const { history } = await request<HistoryQuery>(
-      "http://localhost:4000",
+      import.meta.env.VITE_API_URL,
       getHistoryQueryDocument,
       { quoteSymbol: symbol, range: chartRange }
     );
