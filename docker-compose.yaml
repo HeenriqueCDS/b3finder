@@ -1,0 +1,13 @@
+version: "3.4"
+services:
+  db-pg:
+    container_name: b3finder-psql
+    image: postgres
+    ports:
+    - "5432:5432"
+    environment:
+      POSTGRES_DB: b3finder-test
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+    - $HOME/postgres-data:/var/lib/postgresql/data
