@@ -7,15 +7,11 @@ import { importTicker } from "./queue/sqs";
 import { typeDefs } from "./type-defs";
 import { startTimestamp1MonthAgo, startTimestamp1WeekAgo, startTimestamp3MonthsAgo } from "./utils/timestamp";
 
-
-
 const resolvers: Resolvers = {
   Query: {
     history: async (parent, args, context) => {
       const { range } = args; 
-
-
-
+ 
       const history = await db.history.findMany({
         where: { quoteSymbol: args.quoteSymbol},
         orderBy: { date: "asc" },
@@ -63,5 +59,4 @@ const server = new ApolloServer({
 const { url } = await startStandaloneServer(server, {
   listen: { port: 4000 },
 });
-
 console.log(`🚀  Server ready at: ${url}`);
