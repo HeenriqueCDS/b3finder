@@ -11,7 +11,6 @@ export const Home = () => {
     const [search, setSearch] = useState<string>('')
     if (isLoading) return <Loading loading={isLoading} />
     if (!data) return <h1>Error</h1>
-
     const filteredData = data.filter(item =>
         item.symbol.toLocaleLowerCase().includes(search.toLocaleLowerCase()) ||
         item.longName?.toLocaleLowerCase().includes(search.toLocaleLowerCase()) &&
