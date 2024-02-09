@@ -1,62 +1,36 @@
 import { ApolloServer } from "@apollo/server";
-
-import { startStandaloneServer } from "@apollo/server/standalone";
-import { Resolvers } from "../gql/schema";
-import { db } from "./database/client";
-import { importTicker } from "./queue/sqs";
+import { expressMiddleware } from "@apollo/server/express4";
+import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
+import cors from "cors";
+import express from "express";
+import http from "http";
+import { resolvers } from "./resolvers";
 import { typeDefs } from "./type-defs";
-import { startTimestamp1MonthAgo, startTimestamp1WeekAgo, startTimestamp3MonthsAgo } from "./utils/timestamp";
 
-const resolvers: Resolvers = {
-  Query: {
-    history: async (parent, args, context) => {
-      const { range } = args; 
- 
-      const history = await db.history.findMany({
-        where: { quoteSymbol: args.quoteSymbol},
-        orderBy: { date: "asc" },
-      });
-
-      if (history.length < 62) return []
-
-      const filteredHistory = history.filter((h) => {
-        if (range == "1wk") return h.date >= startTimestamp1WeekAgo;
-        if (range == "1mo") return h.date >= startTimestamp1MonthAgo;
-        if (range == "3mo") return h.date >= startTimestamp3MonthsAgo;
-        return true;
-      })
-
-      if (filteredHistory.length < 5 && range == "1wk") await importTicker(args.quoteSymbol);
-      if (filteredHistory.length < 22 && range == "1mo") await importTicker(args.quoteSymbol);
-      if (filteredHistory.length < 62 && range == "3mo") await importTicker(args.quoteSymbol);
-      
-      return filteredHistory;
-    },
-    quotes: async (parent, args, context) => {
-      const quotes = await db.quote.findMany({});
-      return quotes;
-    },
-    quote: async (parent, args, context) => {
-      const quote = await db.quote.findUnique({
-        where: { symbol: args.symbol },
-      });
-
-      if (!quote) {
-        await importTicker(args.symbol);
-        return null;
-      }
-
-      return quote;
-    },
-  },
-};
+const app = express();
+const httpServer = http.createServer(app);
 
 const server = new ApolloServer({
   typeDefs,
   resolvers,
+  plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
 });
 
-const { url } = await startStandaloneServer(server, {
-  listen: { port: 4000 },
-});
-console.log(`🚀  Server ready at: ${url}`);
+await server.start();
+
+app.use(
+  "/graphql",
+  cors<cors.CorsRequest>({
+    origin: [
+      "*"
+    ],
+  }),
+  express.json(),
+  expressMiddleware(server)
+);
+
+await new Promise<void>((resolve) =>
+  httpServer.listen({ port: 4000 }, resolve)
+);
+
+console.log(`🚀 Server ready at http://localhost:4000/graphql`);
