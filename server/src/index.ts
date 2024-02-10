@@ -21,9 +21,18 @@ await server.start();
 app.use(
   "/graphql",
   cors<cors.CorsRequest>({
-    origin: [
-      "*"
+    origin: "*",
+    allowedHeaders: [
+      "Content-Type",
+      "Authorization",
+      "Access-Control-Allow-Origin",
+      "Access-Control-Allow-Headers",
+      "Access-Control-Allow-Methods",
+      "Access-Control-Allow-Credentials",
     ],
+    methods: ["GET", "POST", "OPTIONS"],
+    credentials: true,
+    optionsSuccessStatus: 200,
   }),
   express.json(),
   expressMiddleware(server)
@@ -33,4 +42,4 @@ await new Promise<void>((resolve) =>
   httpServer.listen({ port: 4000 }, resolve)
 );
 
-console.log(`🚀 Server ready at http://localhost:4000/graphql`);
+console.log(`[🚀] Server ready at http://localhost:4000/graphql`);
