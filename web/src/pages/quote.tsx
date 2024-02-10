@@ -15,7 +15,7 @@ export const Quote = () => {
   const [width, setWidth] = useState<number>(0)
   const [chartRange, setChartRange] = useState<'1wk' | '1mo' | '3mo' | ''>('')
   const chartsRef = useRef<HTMLDivElement>(document.getElementById('main') as HTMLDivElement)
-  const symbol = window.location.pathname.replace('/', '')
+  const symbol = window.location.pathname.replace(/\//g, "")
   const navigate = useNavigate()
   const resize = useCallback(() => {
     setTimeout(() => {
