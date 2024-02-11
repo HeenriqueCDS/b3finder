@@ -18,12 +18,12 @@ const resolvers: Resolvers = {
         if (range == "3mo") return h.date >= startTimestamp3MonthsAgo;
         return true;
       });
-      if (filteredHistory.length < 5 && range == "1wk")
-        await importTicker(args.quoteSymbol);
-      if (filteredHistory.length < 22 && range == "1mo")
-        await importTicker(args.quoteSymbol);
-      if (filteredHistory.length < 62 && range == "3mo")
-        await importTicker(args.quoteSymbol);
+      // if (filteredHistory.length < 5 && range == "1wk")
+      //   await importTicker(args.quoteSymbol);
+      // if (filteredHistory.length < 22 && range == "1mo")
+      //   await importTicker(args.quoteSymbol);
+      // if (filteredHistory.length < 62 && range == "3mo")
+      //   await importTicker(args.quoteSymbol);
       return filteredHistory;
     },
 
