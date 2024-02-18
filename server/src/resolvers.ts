@@ -11,7 +11,7 @@ const resolvers: Resolvers = {
         where: { quoteSymbol: args.quoteSymbol },
         orderBy: { date: "asc" },
       });
-      if (history.length < 62) return [];
+      if (history.length < 10) return [];
       const filteredHistory = history.filter((h) => {
         if (range == "1wk") return h.date >= startTimestamp1WeekAgo;
         if (range == "1mo") return h.date >= startTimestamp1MonthAgo;
